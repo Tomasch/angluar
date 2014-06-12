@@ -18,7 +18,7 @@
         <li ng-repeat="phone in phones | filter:query | orderBy:orderProp"
             class="thumbnail phone-listing">
           <a href="#/phones/{{phone.id}}" class="thumb">
-          <a href="#/phones/{{phone.id}}">{{phone.name}}</a>
+          <a href="#/phones/{{phone.id}}" ng-click="passObj(phone)">{{phone.name}}</a>
           <p>{{phone.desc}}</p>
         </li>
       </ul>
@@ -26,8 +26,8 @@
     </div>
   </div>
 </div>
-<div ng-controller="MainCtrl">
+<!--<div ng-controller="MainCtrl">
 <li ng-repeat="msg in msgs">
 {{msg.d}}
 </li>
-</div>
+</div>-->
