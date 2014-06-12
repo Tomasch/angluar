@@ -1,10 +1,10 @@
 var express = require('express'),
-	app = express(),
-	server = require('http').createServer(app),
+	phonecatApp = express(),
+	server = require('http').createServer(phonecatApp),
 	io = require('socket.io').listen(server);
 
-app.configure(function() {
-    app.use(express.static(__dirname));
+phonecatApp.configure(function() {
+    phonecatApp.use(express.static(__dirname));
 });
 
 io.sockets.on('connection', function(socket) {
@@ -12,17 +12,17 @@ io.sockets.on('connection', function(socket) {
 		socket.broadcast.emit('onNoteCreated', data);
 	});
 */
-	socket.on('updateNote', function(data) {
-		socket.broadcast.emit('onNoteUpdated', data);
+	socket.on('Change', function(data) {
+		socket.broadcast.emit('onChange', data);
 	});
 
 /*	socket.on('moveNote', function(data){
 		socket.broadcast.emit('onNoteMoved', data);
 	});
 */
-	socket.on('deleteNote', function(data){
-		socket.broadcast.emit('onNoteDeleted', data);
-	});
+	//socket.on('deleteNote', function(data){
+	//	socket.broadcast.emit('onNoteDeleted', data);
+	//});
 });
 
 server.listen(1337);

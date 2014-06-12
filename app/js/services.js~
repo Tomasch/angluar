@@ -6,12 +6,12 @@ var phonecatServices = angular.module('phonecatApp.phonecatServices', ['ngResour
 
 phonecatServices.factory('Phone', ['$resource',
   function($resource){
-    return $resource('phones/:phoneId.json', {}, {
+    return $resource('phones_y/:phoneId.json', {}, {
       query: {method:'GET', params:{phoneId:'phones'}, isArray:true}
     });
   }]);
 
-/*phonecatServices.factory('socket', function($rootScope) {
+phonecatServices.factory('socket', function($rootScope) {
 	var socket = io.connect();
 	return {
 		on: function(eventName, callback) {
@@ -33,4 +33,4 @@ phonecatServices.factory('Phone', ['$resource',
 			});
 		}
 	};
-});*/
+});

@@ -4,14 +4,26 @@
 
 var phonecatControllers = angular.module('phonecatApp.phonecatControllers', []);
 
-phonecatControllers.controller('PhoneListCtrl', ['$scope', 'Phone',
-  function($scope, Phone) {
+phonecatControllers.controller('PhoneListCtrl', ['$scope', 'Phone', 'socket',
+  function($scope, Phone, socket) {
+
+   socket.on('onChange', function(data) {
+	console.log("SIEMA");
+	$scope.phones = Phone.query();
+   });
+
     $scope.phones = Phone.query();
     $scope.orderProp = 'age';
     $scope.passObj = function($ph) {
         console.log($ph.id);
 	$scope.ph = $ph;
     }
+
+   $scope.deleteNote = function($id) {
+	console.log("hej" + $id);
+	$scope.phones = Phone.query();
+	socket.emit('Change', $scope.phones);
+  }
   }]);
 /*  function($scope, $http) {
 	console.log('siema');
@@ -31,8 +43,6 @@ phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', 'Ph
     //$scope.code = 'ypIGeNdJbJ4';
     $scope.code=$routeParams.phoneId;
     //$scope.json = {"id":"ypIGeNdJbJ4","name":" some Name","desc":"some desc"};
-    
-console.log('siemabbb' + $scope.phone.name);
 
   }]);
 
@@ -57,7 +67,7 @@ phonecatControllers.directive('myYoutube', function($sce) {
     };
 });
 
-/*phonecatControllers.controller('MainCtrl', function($scope, socket) {
+phonecatControllers.controller('MainCtrl', function($scope, socket) {
 	$scope.notes = [];
 
 	// Incoming
@@ -98,7 +108,7 @@ phonecatControllers.directive('myYoutube', function($sce) {
 		$scope.notes = newNotes;
 	}
 });
-
+/*
 phonecatControllers.directive('stickyNote', function(socket) {
 	var controller = function($scope) {
 			// Incoming
