@@ -42,11 +42,15 @@ phonecatControllers.directive('myYoutube', function($sce) {
         restrict: 'EA',
         scope: { code:'=' },
         replace: true,
-        template: '<div style="height:400px;"><iframe style="overflow:hidden;height:390px;width:640px" width="640px" height="390px" src="{{url}}" frameborder="0" allowfullscreen></iframe></div>',
+        template: '<div style="height:400px;"><iframe style="overflow:hidden;height:390px;width:640px" width="640px" height="390px" src="{{url}}" frameborder="0" allowfullscreen></iframe></div>',//<h1>{{name}}</h1><p>{{desc}}</p>',
         link: function (scope) {
             scope.$watch('code', function (newVal) {
                 if (newVal) {
                     scope.url = $sce.trustAsResourceUrl("http://www.youtube.com/embed/" + newVal);
+		    $.getJSON('http://gdata.youtube.com/feeds/api/videos/'+newVal+'?v=2&alt=jsonc',function(data,status,xhr){
+			    document.getElementById('title').innerHTML = data.data.title;
+			    document.getElementById('desc').innerHTML = data.data.description;
+			});
                 }
             });
         }
