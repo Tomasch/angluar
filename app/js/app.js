@@ -2,19 +2,16 @@
 
 /* App Module */
 
-var video = angular.module('video', [
+var phonecatApp = angular.module('phonecatApp', [
   'ngRoute',
   'phonecatAnimations',
 
-  'phonecatControllers',
-  'phonecatFilters',
-  'phonecatServices',
+  'phonecatApp.phonecatControllers',
+  'phonecatApp.phonecatFilters',
+  'phonecatApp.phonecatServices'
 ]);
 
-
-
-
-video.config(['$routeProvider',
+phonecatApp.config(['$routeProvider',
   function($routeProvider) {
     $routeProvider.
       when('/phones', {

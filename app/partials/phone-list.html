@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-md-2">
       <!--Sidebar content-->
-
+<!--{{phones | json}}-->
       Search: <input ng-model="query">
       Sort by:
       <select ng-model="orderProp">
@@ -17,12 +17,17 @@
       <ul class="phones">
         <li ng-repeat="phone in phones | filter:query | orderBy:orderProp"
             class="thumbnail phone-listing">
-          <a href="#/phones/{{phone.id}}" class="thumb"><img ng-src="{{phone.imageUrl}}"></a>
+          <a href="#/phones/{{phone.id}}" class="thumb">
           <a href="#/phones/{{phone.id}}">{{phone.name}}</a>
-          <p>{{phone.snippet}}</p>
+          <p>{{phone.desc}}</p>
         </li>
       </ul>
 
     </div>
   </div>
+</div>
+<div ng-controller="MainCtrl">
+<li ng-repeat="msg in msgs">
+{{msg.d}}
+</li>
 </div>
