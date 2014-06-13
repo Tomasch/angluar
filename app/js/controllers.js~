@@ -21,16 +21,18 @@ phonecatControllers.controller('PhoneListCtrl', ['$scope', 'Phone', 'socket', '$
 
    $scope.createNote = function() {
 	var id = $('#add').val();
-	var gdata = 'siema';
 	console.log("createNote");
 	$http.get('phones_y/phones.json').success(function(data) {
 	    $http.get('http://gdata.youtube.com/feeds/api/videos/'+id+'?v=2&alt=jsonc').success(function(ytdata) {
 		var entry = {"id":ytdata.data.id,"name":ytdata.data.title,"desc":ytdata.data.description};
         	data.push({"id":ytdata.data.id,"name":ytdata.data.title,"desc":ytdata.data.description});
-		console.log(angular.toJson(data));
-		//fs.writeFile( "phones_y/phones.json", JSON.stringify( angular.toJson(data) ), "utf8");
+		//console.log(JSON.stringify( angular.toJson(data) ));
+		gdata = JSON.stringify( angular.toJson(data) );
+		socket.emit('createNote', data);
+
 	   });
 	});
+	console.log(gdata);
 	$scope.phones = Phone.query();
 	socket.emit('Change', $scope.phones);
    }
