@@ -4,23 +4,38 @@
 
 var phonecatControllers = angular.module('phonecatApp.phonecatControllers', []);
 
-phonecatControllers.controller('PhoneListCtrl', ['$scope', 'Phone', 'socket',
-  function($scope, Phone, socket) {
+phonecatControllers.controller('PhoneListCtrl', ['$scope', 'Phone', 'socket', '$http',
+  function($scope, Phone, socket, $http) {
 
    socket.on('onChange', function(data) {
-	console.log("SIEMA");
 	$scope.phones = Phone.query();
    });
 
-    $scope.phones = Phone.query();
+    if(!$scope.phones)
+	$scope.phones = Phone.query();
     $scope.orderProp = 'age';
     $scope.passObj = function($ph) {
         console.log($ph.id);
 	$scope.ph = $ph;
     }
 
+   $scope.createNote = function() {
+	var id = $('#add').val();
+	var gdata = 'siema';
+	console.log("createNote");
+	$http.get('phones_y/phones.json').success(function(data) {
+	    $http.get('http://gdata.youtube.com/feeds/api/videos/'+id+'?v=2&alt=jsonc').success(function(ytdata) {
+		var entry = {"id":ytdata.data.id,"name":ytdata.data.title,"desc":ytdata.data.description};
+        	data.push({"id":ytdata.data.id,"name":ytdata.data.title,"desc":ytdata.data.description});
+		console.log(angular.toJson(data));
+		//fs.writeFile( "phones_y/phones.json", JSON.stringify( angular.toJson(data) ), "utf8");
+	   });
+	});
+	$scope.phones = Phone.query();
+	socket.emit('Change', $scope.phones, gdata);
+   }
+
    $scope.deleteNote = function($id) {
-	console.log("hej" + $id);
 	$scope.phones = Phone.query();
 	socket.emit('Change', $scope.phones);
   }
