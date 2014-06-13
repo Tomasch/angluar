@@ -97,3 +97,61 @@ ul.specs dt {
 h1 {
   border-bottom: 1px solid gray;
 }
+
+
+
+
+
+.edit-inplace
+{
+	position:relative;
+}
+.edit-inplace-options
+{
+	position:absolute;
+	right:-1px;
+	bottom:-10px;
+	background:#dddddd;
+	background:-moz-linear-gradient(top,#eeeeee, #dddddd);
+	background: -webkit-gradient(linear, left top, left bottom, from(#eeeeee), to(#dddddd));
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#dddddd');
+	font-size:13px;
+}
+.edit-inplace-options li
+{
+	float:left;
+}
+.edit-save, .edit-cancel
+{
+	cursor:pointer;
+	padding:4px;	
+	display:block;
+	float:left;
+	border:solid 1px #ccc;
+}
+.edit-save:hover, .edit-cancel:hover
+{
+	border:solid 1px #999;
+}
+.edit-save:before
+{
+	content:'✔';
+	margin-right:2px;
+}
+.edit-save
+{
+	border-right:solid 1px #bbb;
+}
+.edit-cancel
+{
+	border-left:solid 1px #eee;
+}
+.edit-textarea
+{
+	width:99%;
+	font-size:13px;
+	font-family:Sans-Serif;
+	background:#ffffdd;
+	border:solid 1px #EDC648;
+	padding:2px;
+}

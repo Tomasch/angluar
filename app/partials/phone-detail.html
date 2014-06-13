@@ -1,7 +1,8 @@
 {{json | json}}
 <div my-youtube code="code"></div>
 
-<h1 id="name">{{name}}</h1>
-<p style="width: 50%" id="desc">{{desc}}</p>
-
+<h1 id="name" class="editable">{{name}}</h1>
+<p style="width: 50%" id="desc" class="editable">{{desc}}</p>
+<!--<input type="text" id="name" value="{{name}}" \>-->
+<!--<textarea id="desc">{{desc}}</textarea>-->
 <button ng-click="update()">Update!</button>
