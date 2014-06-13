@@ -3,7 +3,7 @@
     <div class="col-md-2">
       <!--Sidebar content-->
 <!--{{phones | json}}-->
-      Add: <input type="text" id="add"\> <button id="createButton" ng-click="createNote()">Add</button><br>
+      Add: <input type="text" id="add" value="pQDR83AN75U"\> <button id="createButton" ng-click="createNote()">Add</button><br>
       Search: <input ng-model="query">
       Sort by:
       <select ng-model="orderProp">
@@ -20,7 +20,7 @@
             class="thumbnail phone-listing" ondelete="deleteNote(id)">
           <a href="#/phones/{{phone.id}}" class="thumb">
           <a href="#/phones/{{phone.id}}" ng-click="passObj(phone)">{{phone.name}}</a>
-          <p>{{phone.desc}}</p>
+          <p style="height: 2em; overflow: hidden">{{phone.desc}}</p>
 	<button type="button" class="close" ng-click="deleteNote(phone.id)">&times;</button>
         </li>
       </ul>

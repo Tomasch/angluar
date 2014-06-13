@@ -20,7 +20,7 @@
             class="thumbnail phone-listing" ondelete="deleteNote(id)">
           <a href="#/phones/{{phone.id}}" class="thumb">
           <a href="#/phones/{{phone.id}}" ng-click="passObj(phone)">{{phone.name}}</a>
-          <p>{{phone.desc}}</p>
+          <p style="height: 3em; overflow: hidden">{{phone.desc}}</p>
 	<button type="button" class="close" ng-click="deleteNote(phone.id)">&times;</button>
         </li>
       </ul>

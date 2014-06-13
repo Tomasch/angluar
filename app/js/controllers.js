@@ -22,49 +22,34 @@ phonecatControllers.controller('PhoneListCtrl', ['$scope', 'Phone', 'socket', '$
    $scope.createNote = function() {
 	var id = $('#add').val();
 	console.log("createNote");
-	$http.get('phones_y/phones.json').success(function(data) {
-	    $http.get('http://gdata.youtube.com/feeds/api/videos/'+id+'?v=2&alt=jsonc').success(function(ytdata) {
-		var entry = {"id":ytdata.data.id,"name":ytdata.data.title,"desc":ytdata.data.description};
-        	data.push({"id":ytdata.data.id,"name":ytdata.data.title,"desc":ytdata.data.description});
-		//console.log(JSON.stringify( angular.toJson(data) ));
-		gdata = JSON.stringify( angular.toJson(data) );
-		socket.emit('createNote', angular.toJson(data));
+	$http.get('http://gdata.youtube.com/feeds/api/videos/'+id+'?v=2&alt=jsonc').success(function(ytdata) {
+	   $scope.phones.push({"id":ytdata.data.id,"name":ytdata.data.title,"desc":ytdata.data.description});
+	   //console.log(JSON.stringify( angular.toJson(data) ));
+	   socket.emit('createNote', angular.toJson($scope.phones));
 
-	   });
 	});
-	console.log(gdata);
+	console.log($scope.phones);
 	socket.emit('Change', $scope.phones);
 	$scope.phones = Phone.query();
    }
    $scope.deleteNote = function($id) {
-	var promise = $q.all(null);
-	$scope.tid = $id;
-	//$http.get('phones_y/phones.json').success(function(data) {
-	   	var oldPhones = $scope.phones;
-		var newPhones = [];
-		var brk = true;
-		angular.forEach(oldPhones, function(phone) {
-			promise = promise.then(function(){
-			return $http({
-			   method: 'GET', 
-			   url:'phones_y/phones.json'
-			   }).then(function(res){
-				console.log("res: "+res);
-				//$scope.responses.push(res.data);
-				if(phone.id !== $id && brk) { newPhones.push(phone); console.log('pushed: '+phone); brk=false; }
-			   });
-			});
-		});
-
-		$scope.phones = newPhones;
-		socket.emit('createNote', angular.toJson(newPhones));
-	//});
-  promise.then(function(){
+//console.log(angular.toJson($scope.phones));
+   	var oldPhones = $scope.phones;
+	var newPhones = [];
+	var brk = true;
+	oldPhones.forEach(function(phone, index, array) {
+		//console.log(phone.id+' '+$id);
+		if(phone.id == $id ) {
+			if(brk) brk=false;
+			else {newPhones.push(phone); console.log('pushed: '+phone.name); }
+		}
+		else { brk=newPhones.push(phone); console.log('pushed: '+phone.name); }
+	});
+	socket.emit('createNote', angular.toJson(newPhones));
 	console.log("del: "+$scope.phone);
 	socket.emit('Change', $scope.phones);
 	$scope.phones = Phone.query();
-  })
-  }
+};
   }]);
 /*  function($scope, $http) {
 	console.log('siema');
