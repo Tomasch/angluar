@@ -11,7 +11,7 @@ phonecatControllers.controller('PhoneListCtrl', ['$scope', 'Phone', 'socket', '$
 	$scope.phones = Phone.query();
    });
 
-    if(!$scope.phones)
+    //if(!$scope.phones)
 	$scope.phones = Phone.query();
     $scope.orderProp = 'age';
     $scope.passObj = function($ph) {
@@ -33,13 +33,25 @@ phonecatControllers.controller('PhoneListCtrl', ['$scope', 'Phone', 'socket', '$
 	   });
 	});
 	console.log(gdata);
-	$scope.phones = Phone.query();
 	socket.emit('Change', $scope.phones);
+	$scope.phones = Phone.query();
    }
 
    $scope.deleteNote = function($id) {
-	$scope.phones = Phone.query();
+	$http.get('phones_y/phones.json').success(function(data) {
+	   	var oldPhones = $scope.phones;
+		newPhones = [];
+		var brk = true;
+		angular.forEach(oldPhones, function(data) {
+			if(data.id !== id && brk) { newPhones.push(data); brk=false; }
+		});
+
+		$scope.phones = newPhones;
+		socket.emit('createNote', angular.toJson(newPhones));
+	});
+	console.log("del: "+$scope.phone);
 	socket.emit('Change', $scope.phones);
+	$scope.phones = Phone.query();
   }
   }]);
 /*  function($scope, $http) {
@@ -56,6 +68,7 @@ $http.get("http://localhost:80/").success(function(phones) {
 phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', 'Phone',
   function($scope, $routeParams, Phone) {
     $scope.phone = Phone.get({phoneId: $routeParams.phoneId}, function(phone) {
+	console.log(phone);
     });
     //$scope.code = 'ypIGeNdJbJ4';
     $scope.code=$routeParams.phoneId;

@@ -4,14 +4,14 @@
 
 var phonecatControllers = angular.module('phonecatApp.phonecatControllers', []);
 
-phonecatControllers.controller('PhoneListCtrl', ['$scope', 'Phone', 'socket', '$http',
-  function($scope, Phone, socket, $http) {
+phonecatControllers.controller('PhoneListCtrl', ['$scope', 'Phone', 'socket', '$http', '$q',
+  function($scope, Phone, socket, $http, $q) {
 
    socket.on('onChange', function(data) {
 	$scope.phones = Phone.query();
    });
 
-    if(!$scope.phones)
+    //if(!$scope.phones)
 	$scope.phones = Phone.query();
     $scope.orderProp = 'age';
     $scope.passObj = function($ph) {
@@ -28,18 +28,38 @@ phonecatControllers.controller('PhoneListCtrl', ['$scope', 'Phone', 'socket', '$
         	data.push({"id":ytdata.data.id,"name":ytdata.data.title,"desc":ytdata.data.description});
 		//console.log(JSON.stringify( angular.toJson(data) ));
 		gdata = JSON.stringify( angular.toJson(data) );
-		socket.emit('createNote', data);
+		socket.emit('createNote', angular.toJson(data));
 
 	   });
 	});
 	console.log(gdata);
-	$scope.phones = Phone.query();
 	socket.emit('Change', $scope.phones);
+	$scope.phones = Phone.query();
    }
 
    $scope.deleteNote = function($id) {
-	$scope.phones = Phone.query();
+		$http.get('phones_y/phones.json').success(function(data) {
+		   	var oldPhones = $scope.phones;
+			var brk = true;
+	var deferred = $q.defer();
+	var promise = deferred.promise;
+	var newPhones = [];
+	promise.then(function() {
+	console.log("deleting");
+			angular.forEach(oldPhones, function(data) {
+				if(data.id !== id && brk) { newPhones.push(data); brk=false; }
+				console.log(data);
+			});
+
+			$scope.phones = newPhones;
+	}).then(function() {
+	socket.emit('createNote', angular.toJson(newPhones));
+	console.log("del: "+$scope.phone);
 	socket.emit('Change', $scope.phones);
+	$scope.phones = Phone.query();		
+		
+		});
+	});
   }
   }]);
 /*  function($scope, $http) {
@@ -56,6 +76,7 @@ $http.get("http://localhost:80/").success(function(phones) {
 phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', 'Phone',
   function($scope, $routeParams, Phone) {
     $scope.phone = Phone.get({phoneId: $routeParams.phoneId}, function(phone) {
+	console.log(phone);
     });
     //$scope.code = 'ypIGeNdJbJ4';
     $scope.code=$routeParams.phoneId;
