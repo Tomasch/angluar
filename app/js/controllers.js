@@ -4,8 +4,8 @@
 
 var phonecatControllers = angular.module('phonecatApp.phonecatControllers', []);
 
-phonecatControllers.controller('PhoneListCtrl', ['$scope', 'Phone', 'socket', '$http',
-  function($scope, Phone, socket, $http) {
+phonecatControllers.controller('PhoneListCtrl', ['$scope', 'Phone', 'socket', '$http', '$q',
+  function($scope, Phone, socket, $http, $q) {
 
    socket.on('onChange', function(data) {
 	$scope.phones = Phone.query();
@@ -36,22 +36,34 @@ phonecatControllers.controller('PhoneListCtrl', ['$scope', 'Phone', 'socket', '$
 	socket.emit('Change', $scope.phones);
 	$scope.phones = Phone.query();
    }
-
    $scope.deleteNote = function($id) {
-	$http.get('phones_y/phones.json').success(function(data) {
+	var promise = $q.all(null);
+	$scope.tid = $id;
+	//$http.get('phones_y/phones.json').success(function(data) {
 	   	var oldPhones = $scope.phones;
-		newPhones = [];
+		var newPhones = [];
 		var brk = true;
-		angular.forEach(oldPhones, function(data) {
-			if(data.id !== id && brk) { newPhones.push(data); brk=false; }
+		angular.forEach(oldPhones, function(phone) {
+			promise = promise.then(function(){
+			return $http({
+			   method: 'GET', 
+			   url:'phones_y/phones.json'
+			   }).then(function(res){
+				console.log("res: "+res);
+				//$scope.responses.push(res.data);
+				if(phone.id !== $id && brk) { newPhones.push(phone); console.log('pushed: '+phone); brk=false; }
+			   });
+			});
 		});
 
 		$scope.phones = newPhones;
 		socket.emit('createNote', angular.toJson(newPhones));
-	});
+	//});
+  promise.then(function(){
 	console.log("del: "+$scope.phone);
 	socket.emit('Change', $scope.phones);
 	$scope.phones = Phone.query();
+  })
   }
   }]);
 /*  function($scope, $http) {
