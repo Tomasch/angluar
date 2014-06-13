@@ -5,7 +5,7 @@
 var phonecatControllers = angular.module('phonecatApp.phonecatControllers', []);
 
 phonecatControllers.controller('PhoneListCtrl', ['$scope', 'Phone', 'socket', '$http', '$q',
-  function($scope, Phone, socket, $http, $q) {
+  function($scope, Phone, socket, $http) {
 
    socket.on('onChange', function(data) {
 	$scope.phones = Phone.query();
@@ -25,13 +25,12 @@ phonecatControllers.controller('PhoneListCtrl', ['$scope', 'Phone', 'socket', '$
 	$http.get('http://gdata.youtube.com/feeds/api/videos/'+id+'?v=2&alt=jsonc').success(function(ytdata) {
 	   $scope.phones.push({"id":ytdata.data.id,"name":ytdata.data.title,"desc":ytdata.data.description});
 	   //console.log(JSON.stringify( angular.toJson(data) ));
-	   gdata = JSON.stringify( angular.toJson(data) );
 	   socket.emit('createNote', angular.toJson($scope.phones));
-
-	});
-	console.log(gdata);
+	console.log($scope.phones);
 	socket.emit('Change', $scope.phones);
 	$scope.phones = Phone.query();
+
+	});
    }
    $scope.deleteNote = function($id) {
 //console.log(angular.toJson($scope.phones));
@@ -44,7 +43,7 @@ phonecatControllers.controller('PhoneListCtrl', ['$scope', 'Phone', 'socket', '$
 			if(brk) brk=false;
 			else {newPhones.push(phone); console.log('pushed: '+phone.name); }
 		}
-		else { brk=newPhones.push(phone); console.log('pushed: '+phone.name); }
+		else { newPhones.push(phone); console.log('pushed: '+phone.name); }
 	});
 	socket.emit('createNote', angular.toJson(newPhones));
 	console.log("del: "+$scope.phone);
@@ -63,15 +62,31 @@ $http.get("http://localhost:80/").success(function(phones) {
     $scope.orderProp = 'name';
   }]);
 */
-phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', 'Phone',
-  function($scope, $routeParams, Phone) {
-    $scope.phone = Phone.get({phoneId: $routeParams.phoneId}, function(phone) {
-	console.log(phone);
+phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', 'Phone', 'socket',
+  function($scope, $routeParams, Phone, ) {
+    $scope.phones = Phone.query({}, function() {
+	angular.forEach($scope.phones, function(phone){
+	   if(phone.id == $routeParams.phoneId) {$scope.name = phone.name; $scope.desc = phone.desc; }
+	});
     });
     //$scope.code = 'ypIGeNdJbJ4';
     $scope.code=$routeParams.phoneId;
     //$scope.json = {"id":"ypIGeNdJbJ4","name":" some Name","desc":"some desc"};
-
+    $scope.update = function() {
+	var oldPhones = $scope.phones;
+	var newPhones = [];
+	console.log($scope.code+$('#name').val() +$('#desc').val());
+	oldPhones.forEach(function(phone, index, array) {
+	   if(phone.id == $scope.code ) {
+		phone.name=$('#name').val();
+		phone.desc=$('#desc').val();
+	   }
+	   newPhones.push(phone)
+	});
+	socket.emit('createNote', angular.toJson(newPhones));
+	socket.emit('Change', $scope.phones);
+	$scope.phones = Phone.query();
+    }
   }]);
 
 
@@ -85,10 +100,10 @@ phonecatControllers.directive('myYoutube', function($sce) {
             scope.$watch('code', function (newVal) {
                 if (newVal) {
                     scope.url = $sce.trustAsResourceUrl("http://www.youtube.com/embed/" + newVal);
-		    $.getJSON('http://gdata.youtube.com/feeds/api/videos/'+newVal+'?v=2&alt=jsonc',function(data,status,xhr){
+		    /*$.getJSON('http://gdata.youtube.com/feeds/api/videos/'+newVal+'?v=2&alt=jsonc',function(data,status,xhr){
 			    document.getElementById('title').innerHTML = data.data.title;
 			    document.getElementById('desc').innerHTML = data.data.description;
-			});
+			});*/
                 }
             });
         }
